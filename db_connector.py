@@ -64,8 +64,8 @@ class DBConnector:
         loser_id = request_ids['loser']
         channel_id = request_ids['channel']
         with self.connection_pool.get_connection() as cnx:
-            query = "INSERT INTO {channel_id} (winner_id, loser_id, date)" \
-                    "VALUES ('{winner_id}', '{loser_id}', '{date}');" \
+            query = "INSERT INTO {} (winner_id, loser_id, date)" \
+                    "VALUES ('{}', '{}', '{}');" \
                     .format(channel_id, winner_id, loser_id, date.today().strftime("%Y%m%d"))
             cursor = cnx.cursor()
             cursor.execute(query)

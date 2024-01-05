@@ -20,10 +20,13 @@ def member_joined_channel_event(payload):
 def handle_beatme_event():
     request_data = request.form
     Process(
-        target=bot.handle_match,
+        target=handle_beatme_process,
         args=(request_data,)
     ).start()
     return Response(), 202
+
+def handle_beatme_process(request_data):
+    bot.handle_beatme(request_data)
 
 if __name__ == '__main__':
     app.run(debug=True)

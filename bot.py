@@ -1,6 +1,7 @@
 import os
 from db_connector import DBConnector
 from util.slack_util import SlackUtility
+from beatme import BeatMe
 
 class EloBot:
     
@@ -23,15 +24,15 @@ class EloBot:
 
     def send_welcome_back_message(self, user_id, channel_id):
         state = self.database.get_channel_state(channel_id)
-        user_data = state.get_user_data([user_id])[user_id]
+        user_data = state.get_player_data([user_id])[user_id]
         user_name = self.slack_util.get_user_name_by_id(user_id)
 
         message = f"Welcome back {user_name}!\n" \
-                    f"Even though you left, we kept your records." \
-                    f"Your rating in this channel is {user_data['rating']}."
+                    f"Even though you left, we kept your records.\n" \
+                    f" Your rating in this channel is {user_data['rating']}.\n"
 
         if user_data['ranking']:
-            message += f"Your ranking in this channel is {user_data['ranking']}."
+            message += f" You are ranked #{user_data['ranking']} in this channel."
         else:
             message += "Unfortunately you have less than 5 matches played which means you do not qualify for a rank."
         
@@ -60,22 +61,14 @@ class EloBot:
             text=message
         )
 
-    def handle_match(self, request_data):
+    def handle_beatme(self, request_data):
         # Get current state
         request_ids = self.slack_util.get_ids_from_beatme_request(request_data)
         state = self.database.get_channel_state(request_ids['channel'])
-        old_loser_data = state.get_user_data(request_ids['loser'])
-        old_winner_data = state.get_user_data(request_ids['winner'])
-
-        # Update db
+        
+        # Update database
         self.database.record_match(request_ids)
-        state.record_match(request_ids['winner'], request_ids['loser'])
 
-        # Calculate changes in score
-        new_loser_data = state.get_user_data(request_ids['loser'])
-        new_winner_data = state.get_user_data(request_ids['winner'])
-
-
-        # Send confirmation in channel
+        BeatMe(state, request_ids).execute()
 
         

@@ -10,14 +10,11 @@ class SlackUtility:
         """
         Returns the channel, winner and loser id of the beat me request
         """
-        try:
-            channel_id = request.get('channel_id')
-            loser_id = request.get('user_id')
-            winner_name = self.parse_request_name(request.get('text'))
-            winner_id = self.get_user_by_name(winner_name, self.channel_id)['id']
-            return {'winner': winner_id, 'loser': loser_id, 'channel': channel_id}
-        except Exception as error:
-            print(error)
+        channel_id = request.get('channel_id')
+        loser_id = request.get('user_id')
+        winner_name = self.parse_request_name(request.get('text'))
+        winner_id = self.get_user_by_name(winner_name, channel_id)['id']
+        return {'winner': winner_id, 'loser': loser_id, 'channel': channel_id}
 
     def get_user_by_name(self, user_name, channel_id):
         channel_users = self.get_channel_users(channel_id=channel_id)
@@ -39,7 +36,7 @@ class SlackUtility:
         :param channel_id: string representing the channel ID
         :return: array of user IDs (string)
         """
-        client_response = client.conversations_members(channel=channel_id)
+        client_response = self.client.conversations_members(channel=channel_id)
         if client_response['ok']:
             all_users = []
             for member_id in client_response['members']:
