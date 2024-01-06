@@ -6,6 +6,7 @@ from beatme import BeatMe
 from leaderboard import Leaderboard
 from score import Score
 from revert import Revert
+from history import Histroy
 
 class EloBot:
     
@@ -93,3 +94,6 @@ class EloBot:
 
     def handle_revert(self, request_data):
         Revert(self.database, request_data).execute()
+
+    def handle_history(self, request_data):
+        Histroy(self.database, request_data).execute()

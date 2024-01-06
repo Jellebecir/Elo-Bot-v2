@@ -64,6 +64,18 @@ def handle_revert_request():
 def handle_revert_process(request_data):
     bot.handle_revert(request_data)
 
+@app.route('/history', methods=['POST'])
+def handle_history_request():
+    request_data = request.form
+    Process(
+        target=handle_history_process,
+        args=(request_data,)
+    ).start()
+    return Response(), 200
+
+def handle_history_process(request_data):
+    bot.handle_history(request_data)
+
 if __name__ == '__main__':
     app.run(debug=True)
 

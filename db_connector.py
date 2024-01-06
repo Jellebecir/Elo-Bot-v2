@@ -89,17 +89,27 @@ class DBConnector:
     def revert_latest_match(self, requester_id, channel_id):
         with self.connection_pool.get_connection() as cnx:
             # Retrieve match data
-            retrieve_query = f"SELECT * FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1"
+            retrieve_query = f"SELECT * FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1;"
             cursor = cnx.cursor()
             cursor.execute(retrieve_query)
             match = cursor.fetchone()
 
             # Delete match data
-            delete_query = f"DELETE FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1"
+            delete_query = f"DELETE FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1;"
             cursor.execute(delete_query)
 
             cnx.commit()
             cursor.close()
-            print(f"- REVERTED MATCH {match[0]} FROM {channel_id} WHERE WINNER WAS {match[1]} AND LOSER {match[2]} WITH DATE {match[3]}")
+            if match:
+                print(f"- REVERTED MATCH {match[0]} FROM {channel_id} WHERE WINNER WAS {match[1]} AND LOSER {match[2]} WITH DATE {match[3]}")
             return match
-        
+
+    def get_history(self, requester_id, channel_id):
+        with self.connection_pool.get_connection() as cnx:
+            # Retrieve matches where player participated
+            query = f"SELECT * FROM {channel_id} WHERE winner_id = '{requester_id}' OR loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 10;"
+            cursor = cnx.cursor()
+            cursor.execute(query)
+            history = cursor.fetchall()
+            cursor.close()
+            return history
