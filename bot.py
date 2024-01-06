@@ -77,8 +77,7 @@ class EloBot:
 
     def handle_leaderboard(self, request_data):
         channel_id = request_data.get('channel_id')
-        state = self.database.get_channel_state(channel_id)
-        Leaderboard(state, channel_id).execute()
+        Leaderboard(self.database, channel_id).execute()
 
     def handle_score(self, request_data):
         try:

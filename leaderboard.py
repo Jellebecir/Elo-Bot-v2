@@ -2,12 +2,15 @@ from texttable import Texttable
 from util.slack_util import SlackUtility
 
 class Leaderboard:
-    def __init__(self, state, channel_id) -> None:
+    def __init__(self, db_connector, channel_id) -> None:
+        self.slack_util = SlackUtility()
+        self.channel_id = channel_id
+
         self.table = Texttable()
         self.table_header = ["Rank", "Name", "Wins", "Losses", "Rating", "Shift"]
-        self.slack_util = SlackUtility()
+
+        state = db_connector.get_channel_state(channel_id)
         self.players = [player[1] for player in state.get_snapshot().items()]
-        self.channel_id = channel_id
 
     def execute(self):
         self.create_leaderboard_table()
