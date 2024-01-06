@@ -8,25 +8,25 @@ class SlackUtility:
         self.client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
 
     def validate_user_tagged_request(self, request_ids):
-        if request_ids['winner'] == request_ids['loser']:
+        if request_ids['opponent'] == request_ids['requester']:
             raise SelfTagException()
         
-        if request_ids['winner'] == os.environ['BOT_ID']:
+        if request_ids['opponent'] == os.environ['BOT_ID']:
             raise BotTagException()
 
-        if not self.is_user_in_channel(request_ids['winner'], request_ids['channel']):
+        if not self.is_user_in_channel(request_ids['opponent'], request_ids['channel']):
             raise UserNotInChannelException()
 
 
-    def get_ids_from_beatme_request(self, request):
+    def get_ids_from_tagged_request(self, request):
         """
-        Returns the channel, winner and loser id of the beat me request
+        Returns the channel, requester id and opponent id of a request with a tagged user
         """
         channel_id = request.get('channel_id')
         loser_id = request.get('user_id')
         winner_name = self.parse_request_name(request.get('text'))
         winner_id = self.get_user_by_name(winner_name, channel_id)['id']
-        request_ids = {'winner': winner_id, 'loser': loser_id, 'channel': channel_id}
+        request_ids = {'opponent': winner_id, 'requester': loser_id, 'channel': channel_id}
         self.validate_user_tagged_request(request_ids)
         return request_ids
 

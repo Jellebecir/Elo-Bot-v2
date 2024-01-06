@@ -69,4 +69,20 @@ class DBConnector:
             cnx.commit()
             cursor.close()
             print("- INSERTED MATCH INTO {} WITH WINNER {} AND LOSER {}".format(channel_id, winner_id, loser_id))
+
+    def get_score_between_players(self, requester_id, opponont_id, channel_id):
+        with self.connection_pool.get_connection() as cnx:
+            query = f"SELECT\n" \
+                    f"   SUM(CASE WHEN winner_id = '{requester_id}' THEN 1 ELSE 0 END),\n" \
+                    f"   SUM(CASE WHEN winner_id = '{opponont_id}' THEN 1 ELSE 0 END)\n" \
+                    "FROM\n" \
+                    f"   {channel_id}\n" \
+                    "WHERE\n" \
+                    f"   (winner_id = '{requester_id}' AND loser_id = '{opponont_id}') OR\n" \
+                    f"   (winner_id = '{opponont_id}' AND loser_id = '{requester_id}');"
+            cursor = cnx.cursor()
+            cursor.execute(query)
+            data = cursor.fetchall()[0]
+            cursor.close()
+            return {requester_id: data[0], opponont_id: data[1]}
         
