@@ -86,3 +86,20 @@ class DBConnector:
             cursor.close()
             return {requester_id: data[0], opponont_id: data[1]}
         
+    def revert_latest_match(self, requester_id, channel_id):
+        with self.connection_pool.get_connection() as cnx:
+            # Retrieve match data
+            retrieve_query = f"SELECT * FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1"
+            cursor = cnx.cursor()
+            cursor.execute(retrieve_query)
+            match = cursor.fetchone()
+
+            # Delete match data
+            delete_query = f"DELETE FROM {channel_id} WHERE loser_id = '{requester_id}' ORDER BY match_id DESC LIMIT 1"
+            cursor.execute(delete_query)
+
+            cnx.commit()
+            cursor.close()
+            print(f"- REVERTED MATCH {match[0]} FROM {channel_id} WHERE WINNER WAS {match[1]} AND LOSER {match[2]} WITH DATE {match[3]}")
+            return match
+        

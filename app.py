@@ -52,6 +52,18 @@ def handle_score_request():
 def handle_score_process(request_data):
     bot.handle_score(request_data)
 
+@app.route('/revert', methods=['POST'])
+def handle_revert_request():
+    request_data = request.form
+    Process(
+        target=handle_revert_process,
+        args=(request_data,)
+    ).start()
+    return Response(), 200
+
+def handle_revert_process(request_data):
+    bot.handle_revert(request_data)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
