@@ -1,10 +1,22 @@
 import os
 import re
 import slack
+from util.exceptions import *
 
 class SlackUtility:
     def __init__(self) -> None:
         self.client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
+
+    def validate_user_tagged_request(self, request_ids):
+        if request_ids['winner'] == request_ids['loser']:
+            raise SelfTagException()
+        
+        if request_ids['winner'] == os.environ['BOT_ID']:
+            raise BotTagException()
+
+        if not self.is_user_in_channel(request_ids['winner'], request_ids['channel']):
+            raise UserNotInChannelException()
+
 
     def get_ids_from_beatme_request(self, request):
         """
@@ -14,7 +26,9 @@ class SlackUtility:
         loser_id = request.get('user_id')
         winner_name = self.parse_request_name(request.get('text'))
         winner_id = self.get_user_by_name(winner_name, channel_id)['id']
-        return {'winner': winner_id, 'loser': loser_id, 'channel': channel_id}
+        request_ids = {'winner': winner_id, 'loser': loser_id, 'channel': channel_id}
+        self.validate_user_tagged_request(request_ids)
+        return request_ids
 
     def get_user_by_name(self, user_name, channel_id):
         channel_users = self.get_channel_users(channel_id=channel_id)
@@ -69,4 +83,5 @@ class SlackUtility:
         match = re.match(pattern, name.split(" ")[0])
         if match:
             return match.group(1)
-
+        else:
+            raise InvalidUserTagException(name)

@@ -1,6 +1,7 @@
 import os
 from db_connector import DBConnector
 from util.slack_util import SlackUtility
+from util.exceptions import BeatMeException
 from beatme import BeatMe
 from leaderboard import Leaderboard
 
@@ -63,15 +64,15 @@ class EloBot:
         )
 
     def handle_beatme(self, request_data):
-        # Get current state
-        request_ids = self.slack_util.get_ids_from_beatme_request(request_data)
-        state = self.database.get_channel_state(request_ids['channel'])
-        
-        # Update database
-        self.database.record_match(request_ids)
-
-        # 
-        BeatMe(state, request_ids).execute()
+        try:
+            request_ids = self.slack_util.get_ids_from_beatme_request(request_data)
+            BeatMe(self.database, request_ids).execute()
+        except BeatMeException as err:
+            self.slack_util.client.chat_postEphemeral(
+                channel=request_data['channel_id'],
+                user=request_data['user_id'],
+                text=err.message
+            )
 
     def handle_leaderboard(self, request_data):
         channel_id = request_data.get('channel_id')

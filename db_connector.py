@@ -59,10 +59,7 @@ class DBConnector:
             cursor.close()
             return data
         
-    def record_match(self, request_ids):
-        winner_id = request_ids['winner']
-        loser_id = request_ids['loser']
-        channel_id = request_ids['channel']
+    def record_match(self, winner_id, loser_id, channel_id):
         with self.connection_pool.get_connection() as cnx:
             query = "INSERT INTO {} (winner_id, loser_id, date)" \
                     "VALUES ('{}', '{}', '{}');" \

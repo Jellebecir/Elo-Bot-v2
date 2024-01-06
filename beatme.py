@@ -1,16 +1,29 @@
 from util.slack_util import SlackUtility
 
 class BeatMe:
-    def __init__(self, state, request_ids) -> None:
-        self.state = state
+    def __init__(self, db_connector, request_ids) -> None:
         self.slack_util = SlackUtility()
+        
+        # User and channel info
         self.winner_id = request_ids['winner']
         self.winner_name = self.slack_util.get_user_name_by_id(self.winner_id)
         self.loser_id = request_ids['loser']
         self.loser_name = self.slack_util.get_user_name_by_id(self.loser_id)
         self.channel_id = request_ids['channel']
 
+        # State and db management
+        self.database = db_connector
+        self.state = db_connector.get_channel_state(self.channel_id)
+
+
     def execute(self):
+
+        # Update database
+        self.database.record_match(
+            self.winner_id, 
+            self.loser_id, 
+            self.channel_id
+            )
 
         # Get old player data for reference
         old_ranked_state = self.state.get_snapshot()
@@ -20,6 +33,7 @@ class BeatMe:
 
         # Calculate changes in score relative to the old
         state_changes = self.state.get_snapshot_diffs(old_ranked_state)
+
         self.send_match_notifications(state_changes)
     
     def send_match_notifications(self, state_changes):
