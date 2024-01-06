@@ -40,6 +40,18 @@ def handle_leaderboard_request():
 def handle_leaderboard_process(request_data):
     bot.handle_leaderboard(request_data)
 
+@app.route('/score', methods=['POST'])
+def handle_score_request():
+    request_data = request.form
+    Process(
+        target=handle_score_process,
+        args=(request_data,)
+    ).start()
+    return Response(), 200
+
+def handle_score_process(request_data):
+    bot.handle_score(request_data)
+
 if __name__ == '__main__':
     app.run(debug=True)
 

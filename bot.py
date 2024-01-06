@@ -1,9 +1,10 @@
 import os
 from db_connector import DBConnector
 from util.slack_util import SlackUtility
-from util.exceptions import BeatMeException
+from util.exceptions import RequestWithUserTagException
 from beatme import BeatMe
 from leaderboard import Leaderboard
+from score import Score
 
 class EloBot:
     
@@ -65,9 +66,9 @@ class EloBot:
 
     def handle_beatme(self, request_data):
         try:
-            request_ids = self.slack_util.get_ids_from_beatme_request(request_data)
+            request_ids = self.slack_util.get_ids_from_tagged_request(request_data)
             BeatMe(self.database, request_ids).execute()
-        except BeatMeException as err:
+        except RequestWithUserTagException as err:
             self.slack_util.client.chat_postEphemeral(
                 channel=request_data['channel_id'],
                 user=request_data['user_id'],
@@ -78,3 +79,14 @@ class EloBot:
         channel_id = request_data.get('channel_id')
         state = self.database.get_channel_state(channel_id)
         Leaderboard(state, channel_id).execute()
+
+    def handle_score(self, request_data):
+        try:
+            request_ids = self.slack_util.get_ids_from_tagged_request(request_data)
+            Score(self.database, request_ids).execute()
+        except RequestWithUserTagException as err:
+            self.slack_util.client.chat_postEphemeral(
+                channel=request_data['channel_id'],
+                user=request_data['user_id'],
+                text=err.message
+            )

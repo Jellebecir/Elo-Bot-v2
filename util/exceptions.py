@@ -1,24 +1,24 @@
 
-class BeatMeException(Exception):
+class RequestWithUserTagException(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
-class SelfTagException(BeatMeException):
+class SelfTagException(RequestWithUserTagException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.message = "Error: You can't tag yourself in this request"
 
-class BotTagException(BeatMeException):
+class BotTagException(RequestWithUserTagException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.message = "Error: You cant tag Elo bot in this request"
 
-class UserNotInChannelException(BeatMeException):
+class UserNotInChannelException(RequestWithUserTagException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.message = "Error: This user is not in the channel where you made this request"
-BeatMeException
-class InvalidUserTagException(BeatMeException):
+RequestWithUserTagException
+class InvalidUserTagException(RequestWithUserTagException):
     def __init__(self, user_tag,*args: object) -> None:
         super().__init__(*args)
         if user_tag:

@@ -18,9 +18,9 @@ class SlackUtility:
             raise UserNotInChannelException()
 
 
-    def get_ids_from_beatme_request(self, request):
+    def get_ids_from_tagged_request(self, request):
         """
-        Returns the channel, winner and loser id of the beat me request
+        Returns the channel, tagged user id and requester id of a request that contains a tagged user.
         """
         channel_id = request.get('channel_id')
         loser_id = request.get('user_id')
