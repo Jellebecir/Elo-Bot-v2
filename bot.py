@@ -2,6 +2,7 @@ import os
 from db_connector import DBConnector
 from util.slack_util import SlackUtility
 from beatme import BeatMe
+from leaderboard import Leaderboard
 
 class EloBot:
     
@@ -69,6 +70,10 @@ class EloBot:
         # Update database
         self.database.record_match(request_ids)
 
+        # 
         BeatMe(state, request_ids).execute()
 
-        
+    def handle_leaderboard(self, request_data):
+        channel_id = request_data.get('channel_id')
+        state = self.database.get_channel_state(channel_id)
+        Leaderboard(state, channel_id).execute()
