@@ -5,6 +5,7 @@ from util.exceptions import RequestWithUserTagException
 from beatme import BeatMe
 from leaderboard import Leaderboard
 from score import Score
+from revert import Revert
 
 class EloBot:
     
@@ -89,3 +90,6 @@ class EloBot:
                 user=request_data['user_id'],
                 text=err.message
             )
+
+    def handle_revert(self, request_data):
+        Revert(self.database, request_data).execute()
