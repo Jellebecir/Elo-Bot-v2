@@ -30,13 +30,12 @@ class State:
             if player.is_qualified():
                 rank = index - n_players_not_qualified + 1
                 player.set_ranking(rank)
+                # Make copy of player so that future references to player from this state are correct
+                ranked_players[player.id] = player.copy()
 
-            # Else increase number of players not qualified
             else:
                 n_players_not_qualified += 1
-            # Make copy of player so that future references to player from this state are correct
-            ranked_players[player.id] = player.copy()
-        # Return dict with player id as key and Player object as value
+
         return ranked_players
 
     def get_qualified_state(self):

@@ -5,9 +5,9 @@ class BeatMe:
         self.slack_util = SlackUtility()
         
         # User and channel info
-        self.winner_id = request_ids['winner']
+        self.winner_id = request_ids['opponent']
         self.winner_name = self.slack_util.get_user_name_by_id(self.winner_id)
-        self.loser_id = request_ids['loser']
+        self.loser_id = request_ids['requester']
         self.loser_name = self.slack_util.get_user_name_by_id(self.loser_id)
         self.channel_id = request_ids['channel']
 

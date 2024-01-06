@@ -84,5 +84,5 @@ class DBConnector:
             cursor.execute(query)
             data = cursor.fetchall()[0]
             cursor.close()
-            return {'requester': data[0], 'opponent': data[1]}
+            return {requester_id: data[0], opponont_id: data[1]}
         

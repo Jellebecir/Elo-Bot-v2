@@ -7,7 +7,6 @@ class Leaderboard:
         self.channel_id = channel_id
 
         self.table = Texttable()
-        self.table_header = ["Rank", "Name", "Wins", "Losses", "Rating", "Shift"]
 
         state = db_connector.get_channel_state(channel_id)
         self.players = [player[1] for player in state.get_snapshot().items()]
@@ -31,8 +30,10 @@ class Leaderboard:
         self.table.set_header_align(["l" for i in range(6)])
 
     def set_table_content(self):
-        self.table.header(self.table_header)
+        table_header = ["Rank", "Name", "Wins", "Losses", "Rating", "Shift"]
+        self.table.header(table_header)
         for player in self.players:
+            print(player)
             player_name = self.slack_util.get_user_name_by_id(player.id)
             player_rank = self.get_player_rank_display(player.rank)
             row = [player_rank, player_name, player.wins, player.losses, player.rating, player.change]
