@@ -19,6 +19,12 @@ class Revert:
             )
         except InterfaceError:
             self.send_interface_error()
+        except TypeError:
+            self.slack_util.client.chat_postEphemeral(
+                channel=self.channel_id,
+                user=self.requester_id,
+                text="Error: could not revert match because you have not played any matches."
+            )
 
     def send_interface_error_message(self):
         self.slack_util.client.chat_postEphemeral(

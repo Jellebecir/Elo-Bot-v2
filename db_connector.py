@@ -29,7 +29,7 @@ class DBConnector:
             cnx.commit()
             print('- CREATED TABLE FOR CHANNEL {}'.format(channel_id))
     
-    def user_in_channel_table(self, user_id, channel_id):
+    def user_has_played_match(self, user_id, channel_id):
         with self.connection_pool.get_connection() as cnx:
             query = "SELECT EXISTS(SELECT 1 FROM {channel_id} " \
                     "WHERE winner_id = '{user_id}' " \
@@ -42,7 +42,7 @@ class DBConnector:
             cursor.execute(query)
             data = cursor.fetchall()
             cursor.close()
-            if len(data) > 0:
+            if data[0][0]:
                 return True
             return False
     

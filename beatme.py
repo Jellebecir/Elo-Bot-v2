@@ -33,6 +33,11 @@ class BeatMe:
 
         # Calculate changes in score relative to the old
         state_changes = self.state.get_snapshot_diffs(old_ranked_state)
+        if self.winner_id not in state_changes.keys():
+            state_changes[self.winner_id] = self.state.get_player_unranked_data(self.winner_id)
+        if self.loser_id not in state_changes.keys():
+            state_changes[self.loser_id] = self.state.get_player_unranked_data(self.loser_id)
+        
 
         self.send_match_notifications(state_changes)
     
@@ -49,13 +54,14 @@ class BeatMe:
 
     def get_match_announcement_message(self, state_changes):
         winner_change = state_changes[self.winner_id]
+        print('WINNER CHANGE', winner_change)
         loser_change = state_changes[self.loser_id]
         blocks = [
             {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": f"New match: {self.winner_name} vs {self.loser_name} 🏓",
+                    "text": f"New match: {self.winner_name} vs {self.loser_name}",
                     "emoji": True
                 }
             },
@@ -149,7 +155,6 @@ class BeatMe:
 		}
     
     def notify_non_participants_of_rank_change(self, state_changes):
-        print(state_changes)
         for changes in state_changes.items():
             player_id = changes[0]
             change = changes[1]

@@ -22,7 +22,7 @@ class EloBot:
 
         if user_id == self.bot_id:
             self.database.create_channel_table(channel_id)
-        elif self.database.user_in_channel_table(user_id, channel_id):
+        elif self.database.user_has_played_match(user_id, channel_id):
             self.send_welcome_back_message(user_id, channel_id)
         else:
             self.send_welcome_message(user_id, channel_id)
@@ -46,6 +46,8 @@ class EloBot:
             user=user_id,
             text=message
         )
+        print('- EXISTING USER REJOINED CHANNEL')
+
 
     def send_welcome_message(self, user_id, channel_id):
         message = "Hey there, welcome to this Slack channel!\n\n" \
@@ -65,6 +67,8 @@ class EloBot:
             user=user_id,
             text=message
         )
+        print('- NEW USER JOINED CHANNEL')
+
 
     def handle_beatme(self, request_data):
         try:
