@@ -54,7 +54,6 @@ class BeatMe:
 
     def get_match_announcement_message(self, state_changes):
         winner_change = state_changes[self.winner_id]
-        print('WINNER CHANGE', winner_change)
         loser_change = state_changes[self.loser_id]
         blocks = [
             {

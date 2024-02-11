@@ -65,7 +65,6 @@ class State:
         return data
     
     def get_player_unranked_data(self, player_id):
-        print(self.state)
         player = self.state[player_id]
         return {
             'rating': player.change,
