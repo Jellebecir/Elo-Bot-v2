@@ -33,7 +33,6 @@ class Leaderboard:
         table_header = ["Rank", "Name", "Wins", "Losses", "Rating", "Shift"]
         self.table.header(table_header)
         for player in self.players:
-            print(player)
             player_name = self.slack_util.get_user_name_by_id(player.id)
             player_rank = self.get_player_rank_display(player.rank)
             row = [player_rank, player_name, player.wins, player.losses, player.rating, player.change]

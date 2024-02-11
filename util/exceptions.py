@@ -17,7 +17,7 @@ class UserNotInChannelException(RequestWithUserTagException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.message = "Error: This user is not in the channel where you made this request"
-RequestWithUserTagException
+
 class InvalidUserTagException(RequestWithUserTagException):
     def __init__(self, user_tag,*args: object) -> None:
         super().__init__(*args)

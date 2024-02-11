@@ -53,14 +53,25 @@ class State:
         data = {}
         
         for player_id in ids:
-            player = qualified_state[player_id]
+            try:
+                player = qualified_state[player_id]
+                ranking = self.get_user_ranking(qualified_state, player)
+                player.set_ranking(ranking)
+            except KeyError:
+                player = self.state[player_id]
             # Calculate ranking
-            ranking = self.get_user_ranking(qualified_state, player)
-            player.set_ranking(ranking)
             data[player_id] = player
         
         return data
     
+    def get_player_unranked_data(self, player_id):
+        print(self.state)
+        player = self.state[player_id]
+        return {
+            'rating': player.change,
+            'rank': None
+        }
+
     def get_user_ranking(self, state, player):
         sorted_ratings = sorted(state.items(), key=lambda x: x[1].rating, reverse=True)
         return next((index for index, item in enumerate(sorted_ratings) if item[0] == player.id), None) + 1

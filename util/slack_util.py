@@ -25,7 +25,12 @@ class SlackUtility:
         channel_id = request.get('channel_id')
         loser_id = request.get('user_id')
         winner_name = self.parse_request_name(request.get('text'))
-        winner_id = self.get_user_by_name(winner_name, channel_id)['id']
+        winner = self.get_user_by_name(winner_name, channel_id)
+        
+        if not winner:
+            raise UserNotInChannelException()
+
+        winner_id = winner['id']
         request_ids = {'opponent': winner_id, 'requester': loser_id, 'channel': channel_id}
         self.validate_user_tagged_request(request_ids)
         return request_ids

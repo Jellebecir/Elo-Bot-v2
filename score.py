@@ -16,11 +16,21 @@ class Score:
             )
     
     def execute(self):
-        self.slack_util.client.chat_postEphemeral(
-            channel=self.channel_id,
-            user=self.requester_id,
-            text=self.get_score_message()
-        )
+        if self.no_matches_played_between_players():
+            self.slack_util.client.chat_postEphemeral(
+                channel=self.channel_id,
+                user=self.requester_id,
+                text="You have played no matches against this player."
+            )
+        else:
+            self.slack_util.client.chat_postEphemeral(
+                channel=self.channel_id,
+                user=self.requester_id,
+                text=self.get_score_message()
+            )
+
+    def no_matches_played_between_players(self):
+        return not list(self.score.values())[0] and not list(self.score.values())[1]
 
     def get_score_message(self):
         rows = []
