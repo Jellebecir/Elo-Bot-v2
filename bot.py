@@ -1,12 +1,12 @@
 import os
-from db_connector import DBConnector
+from state_management.db_connector import DBConnector
 from util.slack_util import SlackUtility
 from util.exceptions import RequestWithUserTagException
-from beatme import BeatMe
-from leaderboard import Leaderboard
-from score import Score
-from revert import Revert
-from history import Histroy
+from request_handlers.beatme import BeatMe
+from request_handlers.leaderboard import Leaderboard
+from request_handlers.score import Score
+from request_handlers.revert import Revert
+from request_handlers.history import Histroy
 
 class EloBot:
     
