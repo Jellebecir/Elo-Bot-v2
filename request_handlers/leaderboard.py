@@ -2,9 +2,10 @@ from texttable import Texttable
 from util.slack_util import SlackUtility
 
 class Leaderboard:
-    def __init__(self, db_connector, channel_id) -> None:
+    def __init__(self, db_connector, channel_id, requester_id) -> None:
         self.slack_util = SlackUtility()
         self.channel_id = channel_id
+        self.requester_id = requester_id
 
         self.table = Texttable()
 
@@ -14,9 +15,10 @@ class Leaderboard:
     def execute(self):
         self.create_leaderboard_table()
         result = "```" + self.table.draw().replace("=", "") + "```"
-        self.slack_util.client.chat_postMessage(
+        self.slack_util.client.chat_postEphemeral(
             channel=self.channel_id,
-            text=result
+            text=result,
+            user=self.requester_id
         )
 
     def create_leaderboard_table(self):
